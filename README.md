@@ -31,7 +31,7 @@ then be used to
 ## Installation
 
 ```bash
-git clone https://github.com/kasia-kobalczyk/miscalibration-discovery.git
+git clone https://github.com/kasia-kobalczyk/miscalibration-fields.git
 cd miscalibration-discovery
 pip install -e .                 # core package
 pip install -e ".[notebooks]"    # + Jupyter, for the notebooks
