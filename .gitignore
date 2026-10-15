@@ -1,0 +1,16 @@
+**__pycache__
+datasets/
+outputs/
+multirun/
+wandb/
+figures/
+notebooks/lightning_logs/
+.claude/
+notebooks/analysis_outputs/
+# local / build artifacts
+.DS_Store
+.ipynb_checkpoints/
+*.egg-info/
+build/
+dist/
+paper/

@@ -1,0 +1,63 @@
+model:
+  type: kernel
+  in_dim: 2048 #2048
+  hidden_dim: 512
+  num_hidden_layers: 2
+  out_dim: 128
+  dropout: 0.1
+  normalize: true
+
+loss:
+  sigma: 0.5 # bandwidth of the kernel K
+  tau: null # bandwidth of the kernel K_f, no K_f kernel if null 
+  eps: 1.0e-08
+  lambda_mass: 0.0001
+  min_mass: 20 # minimum mass for the discovery region
+  lambda_var: 0
+  var_floor: null
+  lambda_semantic: 0 # weight for the semantic regularization term
+  sigma_semantic: null # bandwidth for the semantic regularization kernel
+  weighted_semantic: null
+  
+trainer:
+  epochs: 100
+  early_stop_patience: 20
+  early_stop_min_delta: 1e-4
+  early_stop_metric: val/corrected_bs_score
+  early_stop_metric_mode: min
+  lr: 3e-5
+  weight_decay: 7e-6
+  grad_clip: 1.0
+  log_every: 10
+  save: true
+  target_metric: val/corrected_bs_score
+  target_metric_mode: min
+
+data:
+  # path: synthetic_clusters_K2_delta1.0_d2
+  name: hhrlhf_judge
+  model_name: Qwen3-1.7B-Base
+  val_frac: 0.1
+  test_frac: 0.1
+  batch_size: 1024
+  num_workers: 0
+  pin_memory: false
+  shuffle: true
+
+seed: 0
+device: cuda:0
+run_name: ${now:%Y-%m-%d_%H-%M-%S}
+# run_name: kernel_${data.path}_${now:%Y-%m-%d_%H-%M-%S}
+wandb:
+  enabled: false # set true (or ++wandb.enabled=true) to log to Weights & Biases
+  project: calib-atlas-clean
+  tags: []
+  notes: ""
+
+hydra:
+  run:
+    dir: ./outputs/${oc.select:data.path,${data.name}/${data.model_name}}/${run_name}
+  sweep:
+    dir: ./multirun/${run_name}
+    subdir: ${hydra.job.id}
+  

@@ -1,0 +1,55 @@
+model:
+  type: resreg
+  in_dim: 2
+  hidden_dim: 256
+  num_hidden_layers: 2
+  out_dim: 1
+  dropout: 0.1
+  normalize: false
+  conditional: false
+
+loss:
+  l2_reg: 0.0
+
+trainer:
+  epochs: 300
+  early_stop_patience: -1
+  early_stop_min_delta: 1e-4
+  early_stop_metric: val/loss
+  early_stop_metric_mode: min
+  lr: 3e-5
+  weight_decay: 7e-6
+  grad_clip: 1.0
+  log_every: 10
+  save: true
+  target_metric: val/loss
+  target_metric_mode: min
+
+data:
+  path: synthetic_field_sinusoid_A0.6_freq3
+  # name: hhrlhf_judge
+  # model_name: Qwen3-4B-Base
+  val_frac: 0.1
+  test_frac: 0.1
+  batch_size: 1024
+  num_workers: 0
+  pin_memory: false
+  shuffle: true
+
+seed: 0
+device: cuda:0
+#run_name: ${data.name}_${data.model_name}_${now:%Y-%m-%d_%H-%M-%S}
+run_name: resreg_${data.path}_${now:%Y-%m-%d_%H-%M-%S}
+wandb:
+  enabled: false # set true (or ++wandb.enabled=true) to log to Weights & Biases
+  project: calib-atlas-clean
+  tags: []
+  notes: ""
+
+hydra:
+  run:
+    dir: ./outputs/${data.path}/${run_name}
+  sweep:
+    dir: ./multirun/${run_name}
+    subdir: ${hydra.job.id}
+  
